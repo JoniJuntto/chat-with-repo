@@ -52,7 +52,7 @@ export default function ChatInterface() {
                 htmlFor="repository"
                 className="block text-sm font-medium text-gray-700 mb-2"
               >
-                Repository (owner/repo)
+                Repository (owner/repo) for example: JoniJuntto/HuikkaBOT
               </label>
               <input
                 type="text"
@@ -60,7 +60,7 @@ export default function ChatInterface() {
                 value={repository}
                 onChange={(e) => setRepository(e.target.value)}
                 placeholder="e.g., facebook/react"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-colors"
+                className="w-full px-4 py-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-colors"
                 required
               />
             </div>
@@ -270,7 +270,7 @@ export default function ChatInterface() {
               value={input}
               onChange={handleInputChange}
               placeholder="Ask about the repository..."
-              className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+              className="flex-1 px-4 py-3 border text-black placeholder:text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
               disabled={isLoading}
             />
             <button
