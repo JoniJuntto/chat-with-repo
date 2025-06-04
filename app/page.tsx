@@ -52,7 +52,7 @@ export default function ChatInterface() {
                 htmlFor="repository"
                 className="block text-sm font-medium text-gray-700 mb-2"
               >
-                Repository (owner/repo) for example: JoniJuntto/HuikkaBOT
+                Repository (owner/repo) e.g., facebook/react
               </label>
               <input
                 type="text"
