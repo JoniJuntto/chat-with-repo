@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Send, Github, MessageCircle, User, Bot } from "lucide-react";
 import { clsx } from "clsx";
 import ReactMarkdown from "react-markdown";
-import { Prism as SyntaxHighlighter, type SyntaxHighlighterProps } from "react-syntax-highlighter";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { tomorrow as tomorrowStyle } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 export default function ChatInterface() {
@@ -146,7 +146,8 @@ export default function ChatInterface() {
                           const match = /language-(\w+)/.exec(className || "");
                           return match ? (
                             <SyntaxHighlighter
-                              style={tomorrowStyle as SyntaxHighlighterProps['style']}
+                              // @ts-expect-error Known type mismatch with react-syntax-highlighter
+                              style={tomorrowStyle}
                               language={match[1]}
                               PreTag="div"
                               className="rounded-md"
