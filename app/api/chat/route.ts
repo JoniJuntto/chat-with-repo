@@ -1,37 +1,22 @@
-/* import { google } from '@ai-sdk/google';
-import { streamText } from 'ai';
-
-
-// Allow streaming responses up to 30 seconds
-export const maxDuration = 30;
-
-export async function POST(req: Request) {
-  const { messages } = await req.json();
-
-  const result = streamText({
-    model: google("gemini-2.5-flash-preview-05-20"),
-    messages,
-  });
-
-  return result.toDataStreamResponse();
-} */
-
-import { google } from '@ai-sdk/google';
-import { streamText, type Message } from 'ai';
+import { google } from "@ai-sdk/google";
+import { streamText, type Message } from "ai";
 import { Octokit } from "@octokit/rest";
-
+import { auth } from "@/auth";
+import { checkRateLimit } from "@/app/lib/rate-limit";
 
 const octokit = new Octokit();
 
 async function getRepositoryContent(owner: string, repo: string) {
   try {
-    // Get repository information
     const { data: repoData } = await octokit.rest.repos.get({
       owner,
       repo,
     });
 
-    // Get repository tree
+    if (!repoData) {
+      throw new Error("Repository not found");
+    }
+
     const { data: tree } = await octokit.rest.git.getTree({
       owner,
       repo,
@@ -39,7 +24,6 @@ async function getRepositoryContent(owner: string, repo: string) {
       recursive: "true",
     });
 
-    // Filter for important files and get their content
     const importantFiles = tree.tree.filter(
       (item) =>
         item.type === "blob" &&
@@ -70,7 +54,7 @@ async function getRepositoryContent(owner: string, repo: string) {
             ).toString("utf-8");
             return {
               path: file.path,
-              content: decodedContent, 
+              content: decodedContent,
             };
           }
         } catch (error) {
@@ -100,12 +84,32 @@ async function getRepositoryContent(owner: string, repo: string) {
 function formatMessagesForGemini(messages: Message[]) {
   return messages.map((message) => ({
     role: message.role,
-    content: message.content
+    content: message.content,
   }));
 }
 
 export async function POST(req: Request) {
   try {
+    const session = await auth();
+    const rateLimit = await checkRateLimit(req);
+
+    if (!rateLimit.allowed) {
+      return new Response(
+        JSON.stringify({
+          error: rateLimit.isAuthenticated
+            ? "Rate limit exceeded. Please try again later."
+            : "Please sign in to continue chatting. Unauthenticated users are limited to 1 message.",
+          remaining: rateLimit.remaining,
+          limit: rateLimit.limit,
+          isAuthenticated: rateLimit.isAuthenticated,
+        }),
+        {
+          status: 429,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
     const { messages, repository } = await req.json();
 
     if (!repository) {
@@ -119,7 +123,7 @@ export async function POST(req: Request) {
 
     const systemPrompt = `You are an AI assistant that helps users understand and work with GitHub repositories. 
 
-- Please help the user understand this repository, its structure, functionality, and answer any questions they have about the code. Be concise but informative.
+- Answer user's question about the repository. Be concise but informative.
 
 Repository Information:
 - Name: ${repoContent.repository.name}
@@ -151,24 +155,19 @@ IMPORTANT FORMATTING INSTRUCTIONS:
 
 Please help the user understand this repository, its structure, functionality, and answer any questions they have about the code. Be concise but informative.`;
 
-
-
-    // Format messages for Gemini
     const formattedMessages = formatMessagesForGemini(messages);
 
-    // Add system context to the first user message or create a context message
     if (formattedMessages.length > 0) {
-      formattedMessages[0].content = 
+      formattedMessages[0].content =
         systemPrompt + "\n\nUser question: " + formattedMessages[0].content;
     }
 
     const result = streamText({
-        model: google("gemini-2.5-flash-preview-05-20"),
-        messages: formattedMessages,
-      });
+      model: google("gemini-2.5-flash-preview-05-20"),
+      messages: formattedMessages,
+    });
 
     return result.toDataStreamResponse();
-    
   } catch (error) {
     console.error("Error in chat API:", error);
     return new Response("Internal Server Error", { status: 500 });
