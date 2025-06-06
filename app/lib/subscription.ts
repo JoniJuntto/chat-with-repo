@@ -1,4 +1,4 @@
-import { prisma } from "./db";
+import prisma from "./db";
 
 export async function hasActiveSubscription(userId: string): Promise<boolean> {
   const subscription = await prisma.subscription.findUnique({

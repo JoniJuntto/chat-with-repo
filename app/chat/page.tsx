@@ -6,8 +6,25 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/sidebar-group";
 
 export default function ChooseRepoPage() {
+  return (
+    <SidebarProvider defaultOpen={true}>
+      <div className="flex min-h-screen">
+        <AppSidebar />
+        <main className="flex-1 ml-[6rem] flex flex-col">
+          <div className="flex-1 p-6">
+            <Content />
+          </div>
+        </main>
+      </div>
+    </SidebarProvider>
+  );
+}
+
+const Content = () => {
   const [repository, setRepository] = useState("");
   const router = useRouter();
 
@@ -96,4 +113,4 @@ export default function ChooseRepoPage() {
       </div>
     </div>
   );
-}
+};
