@@ -1,7 +1,6 @@
 import { google } from "@ai-sdk/google";
 import { streamText, type Message } from "ai";
 import { Octokit } from "@octokit/rest";
-import { auth } from "@/auth";
 import { checkRateLimit } from "@/app/lib/rate-limit";
 
 const octokit = new Octokit();
@@ -90,7 +89,6 @@ function formatMessagesForGemini(messages: Message[]) {
 
 export async function POST(req: Request) {
   try {
-    const session = await auth();
     const rateLimit = await checkRateLimit(req);
 
     if (!rateLimit.allowed) {

@@ -8,19 +8,30 @@ const RATE_LIMIT_RESET_HOURS = 24;
 export async function checkRateLimit(req: Request) {
   const session = await auth();
   const ip = req.headers.get("x-forwarded-for") || "unknown";
-  const email = session?.user?.email;
+  const id = session?.user?.id;
   const isAuthenticated = !!session?.user;
-
+  if (!session?.user?.email) {
+    return {
+      allowed: false,
+      remaining: 0,
+      limit: 1,
+      isAuthenticated,
+    };
+  }
   // Get or create user
   const user = await prisma.user.upsert({
     where: {
-      email: email || `ip_${ip}`,
+      id: id || `ip_${ip}`,
     },
     create: {
-      email: email || `ip_${ip}`,
-      ipAddress: !email ? ip : null,
+      id: id || `ip_${ip}`,
+      email: session.user.email,
+      ipAddress: !id ? ip : null,
     },
-    update: {},
+    update: {
+      email: session.user.email,
+      ipAddress: !id ? ip : null,
+    },
   });
 
   // If user has an active subscription, they have unlimited messages

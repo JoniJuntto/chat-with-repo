@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import stripe from "@/app/config/stripe";
 import { getProduct } from "@/lib/utils";
 import { auth } from "@/auth";
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST() {
   const headersList = await headers();
   const product = await getProduct();
   const session = await auth();
