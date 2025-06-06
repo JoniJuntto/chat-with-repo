@@ -97,7 +97,7 @@ export async function POST(req: Request) {
       return new Response(
         JSON.stringify({
           error: rateLimit.isAuthenticated
-            ? "Rate limit exceeded. Please try again later."
+            ? "Rate limit exceeded. You can subscribe to unlock more messages."
             : "Please sign in to continue chatting. Unauthenticated users are limited to 1 message.",
           remaining: rateLimit.remaining,
           limit: rateLimit.limit,

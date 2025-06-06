@@ -1,7 +1,7 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Send, Github, Bot, User, ArrowLeft, Sparkles } from "lucide-react";
 import { clsx } from "clsx";
@@ -29,8 +29,11 @@ const handleError = (error: string) => {
     case "Repository not found":
       toast.error("Repository not found");
       break;
+    case "Rate limit exceeded":
+      toast.error("Rate limit exceeded");
+      break;
     default:
-      toast.error("An error occurred");
+      console.error(error);
   }
 };
 
@@ -42,7 +45,7 @@ export default function ChatComponent() {
   const repo = params.repository;
   const [repository, setRepository] = useState("");
   const [rateLimitError, setRateLimitError] = useState<string | null>(null);
-
+  const router = useRouter();
   useEffect(() => {
     if (owner && repo) {
       setRepository(`${owner}/${repo}`);
@@ -129,21 +132,6 @@ export default function ChatComponent() {
       <ScrollArea className="flex-1">
         <div className="container mx-auto px-4 py-6">
           <div className="max-w-3xl mx-auto space-y-6">
-            {rateLimitError && (
-              <div className="bg-destructive/10 text-destructive px-4 py-3 rounded-lg text-sm">
-                {rateLimitError}
-                {!session && (
-                  <Button
-                    variant="link"
-                    className="ml-2 p-0 h-auto text-destructive hover:text-destructive/80"
-                    onClick={() => signIn("github")}
-                  >
-                    Sign in with GitHub
-                  </Button>
-                )}
-              </div>
-            )}
-
             {messages.length === 0 && (
               <>
                 <div className="text-center py-12">
@@ -258,6 +246,34 @@ export default function ChatComponent() {
       {/* Input */}
       <div className="border-t border-border/50 bg-card/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">
+          {rateLimitError && (
+            <div className="max-w-3xl mx-auto mb-4">
+              <div className="bg-destructive/10 text-destructive px-4 py-3 rounded-lg text-sm">
+                {rateLimitError}
+                {!session && (
+                  <Button
+                    variant="link"
+                    className="ml-2 p-0 h-auto text-destructive hover:text-destructive/80"
+                    onClick={() => signIn("github")}
+                  >
+                    Sign in with GitHub
+                  </Button>
+                )}
+                {rateLimitError ===
+                  "Rate limit exceeded. You can subscribe to unlock more messages." && (
+                  <Button
+                    variant="link"
+                    className="ml-2 p-0 h-auto text-blue-500 hover:text-blue-600"
+                    onClick={() => {
+                      router.push("/pricing");
+                    }}
+                  >
+                    Subscribe
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
           <form
             onSubmit={handleSubmit}
             className="max-w-3xl mx-auto flex gap-2"

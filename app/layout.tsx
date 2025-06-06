@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Limu -Chat with Repo",
+  title: "Makkara - Chat with Repo",
   description: "Understand any codebase through natural conversation with AI",
 };
 

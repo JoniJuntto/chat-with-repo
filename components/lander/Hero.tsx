@@ -19,13 +19,16 @@ const HeroSection: React.FC = () => {
         <div className="flex flex-col md:flex-row items-center gap-12">
           <div className="md:w-1/2">
             <div className="max-w-xl">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 bg-gradient-to-r from-red-400 via-blue-400 to-green-400 bg-clip-text text-transparent">
+                Makkara
+              </h1>
               <div className="inline-flex items-center rounded-full border px-3 py-1 text-sm mb-6 bg-muted/50">
                 <Star className="h-4 w-4 mr-2 text-yellow-400" />
                 <span className="text-muted-foreground">
                   New: AI-powered code understanding
                 </span>
               </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 bg-gradient-to-r from-green-400 via-blue-400 to-red-400 bg-clip-text text-transparent">
                 Chat With Any GitHub Repo Using AI
               </h1>
               <p className="text-xl text-muted-foreground mb-8">
@@ -141,9 +144,11 @@ const HeroSection: React.FC = () => {
                     placeholder="Ask about this repository..."
                     className="flex-1"
                   />
-                  <Button size="icon" className="shrink-0">
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
+                  <Link href="/chat">
+                    <Button size="icon" className="shrink-0">
+                      <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  </Link>
                 </div>
               </CardContent>
             </Card>
