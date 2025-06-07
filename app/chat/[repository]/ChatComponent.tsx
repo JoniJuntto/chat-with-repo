@@ -79,6 +79,7 @@ export default function ChatComponent() {
         setRepository(`${owner}/${repo}`);
         setRepoError(null);
       } catch (error) {
+        console.error(error);
         setRepoError(
           "Repository not found. Please check the URL and try again."
         );

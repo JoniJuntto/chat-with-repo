@@ -22,6 +22,7 @@ import { AppSidebar } from "@/components/sidebar-group";
 import { Octokit } from "@octokit/rest";
 import { Skeleton } from "@/components/ui/skeleton";
 import { clsx } from "clsx";
+import Image from "next/image";
 
 const octokit = new Octokit();
 
@@ -106,6 +107,7 @@ const Content = () => {
         });
         setError(null);
       } catch (err) {
+        console.error(err);
         setError("Repository not found. Please check the name and try again.");
         setRepoInfo(null);
       } finally {
@@ -246,7 +248,7 @@ const Content = () => {
                 <div className="space-y-6">
                   {/* Repository Header */}
                   <div className="flex items-start gap-4">
-                    <img
+                    <Image
                       src={repoInfo.avatar_url}
                       alt={`${repoInfo.owner}'s avatar`}
                       className="w-16 h-16 rounded-full border-2 border-border"
