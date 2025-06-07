@@ -7,7 +7,7 @@ export async function hasActiveSubscription(userId: string): Promise<boolean> {
     .select()
     .from(subscriptionTable)
     .where(eq(subscriptionTable.userId, userId));
-  return subscription.isActive || false;
+  return subscription?.isActive || false;
 }
 
 export async function setSubscriptionStatus(
