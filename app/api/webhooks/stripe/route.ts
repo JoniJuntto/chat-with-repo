@@ -12,6 +12,7 @@ const webhookSecret = serverEnvs.STRIPE_WEBHOOK_SECRET;
 export async function POST(req: NextRequest) {
   try {
     const body = await req.text();
+    console.log(body);
     const signature = await req.headers.get("stripe-signature");
 
     if (!signature || !webhookSecret) {

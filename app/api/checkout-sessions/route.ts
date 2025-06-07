@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import stripe from "@/app/config/stripe";
 import { getProduct } from "@/lib/utils";
 import { auth } from "@/auth";
+import { serverEnvs } from "@/app/env/server";
 
 export async function POST() {
   const headersList = await headers();
@@ -11,14 +12,19 @@ export async function POST() {
   try {
     console.log(session);
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "User not found" }, { status: 401 });
+      return NextResponse.redirect(`${headersList.get("origin")}/login`, {
+        status: 303,
+      });
     }
     const checkoutSession = await stripe.checkout.sessions.create({
       line_items: [
         {
           price_data: {
             currency: "eur",
-            product: product.id,
+            product:
+              serverEnvs.NODE_ENV === "production"
+                ? "prod_SSH5vUPLhhrvvR"
+                : "prod_SRrxTxYQcEBa51",
             unit_amount: product.price,
             recurring: {
               interval: "month",
@@ -39,6 +45,7 @@ export async function POST() {
       },
       metadata: {
         userId: session?.user?.id ?? "",
+        email: session?.user?.email ?? "",
       },
     });
 

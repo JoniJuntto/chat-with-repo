@@ -1,5 +1,5 @@
 import { db } from "@/app/db";
-import { subscriptionTable } from "@/app/db/schema";
+import { subscriptionTable, usersTable } from "@/app/db/schema";
 import { eq } from "drizzle-orm";
 
 export async function hasActiveSubscription(userId: string): Promise<boolean> {
@@ -14,8 +14,16 @@ export async function setSubscriptionStatus(
   userId: string,
   isActive: boolean,
   stripeCustomerId?: string,
-  stripeSubscriptionId?: string
+  stripeSubscriptionId?: string,
+  email?: string
 ): Promise<void> {
+  const [user] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.id, userId));
+  if (!user) {
+    await db.insert(usersTable).values({ id: userId, email });
+  }
   await db
     .insert(subscriptionTable)
     .values({
@@ -23,14 +31,6 @@ export async function setSubscriptionStatus(
       isActive,
       stripeCustomerId,
       stripeSubscriptionId,
-    })
-    .onConflictDoUpdate({
-      target: [subscriptionTable.userId],
-      set: {
-        isActive,
-        stripeCustomerId,
-        stripeSubscriptionId,
-      },
     })
     .returning();
 }
