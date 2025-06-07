@@ -3,7 +3,15 @@
 import { useChat } from "@ai-sdk/react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Send, Github, Bot, User, ArrowLeft, Sparkles } from "lucide-react";
+import {
+  Send,
+  Github,
+  Bot,
+  User,
+  ArrowLeft,
+  Sparkles,
+  AlertCircle,
+} from "lucide-react";
 import { clsx } from "clsx";
 import { toast } from "sonner";
 import { AssistantMessageRenderer } from "./AssistantMessageRenderer";
@@ -12,6 +20,10 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useSession } from "next-auth/react";
 import { signIn } from "next-auth/react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Octokit } from "@octokit/rest";
+
+const octokit = new Octokit();
 
 const SUGGESTED_QUESTIONS = [
   "Explain the main architecture of this repository",
@@ -42,14 +54,41 @@ export default function ChatComponent() {
   const searchParams = useSearchParams();
   const params = useParams();
   const owner = searchParams.get("owner");
-  const repo = params.repository;
+  const repo =
+    typeof params.repository === "string"
+      ? params.repository
+      : Array.isArray(params.repository)
+      ? params.repository[0]
+      : "";
   const [repository, setRepository] = useState("");
   const [rateLimitError, setRateLimitError] = useState<string | null>(null);
+  const [repoError, setRepoError] = useState<string | null>(null);
+  const [isValidating, setIsValidating] = useState(true);
   const router = useRouter();
+
   useEffect(() => {
-    if (owner && repo) {
-      setRepository(`${owner}/${repo}`);
-    }
+    const validateRepo = async () => {
+      if (!owner || !repo) {
+        setRepoError("Invalid repository URL");
+        setIsValidating(false);
+        return;
+      }
+
+      try {
+        await octokit.rest.repos.get({ owner, repo });
+        setRepository(`${owner}/${repo}`);
+        setRepoError(null);
+      } catch (error) {
+        setRepoError(
+          "Repository not found. Please check the URL and try again."
+        );
+        toast.error("Repository not found");
+      } finally {
+        setIsValidating(false);
+      }
+    };
+
+    validateRepo();
   }, [owner, repo]);
 
   const {
@@ -97,6 +136,40 @@ export default function ChatComponent() {
     setInput(question);
   };
 
+  if (isValidating) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
+            <Bot className="h-6 w-6 text-primary animate-pulse" />
+          </div>
+          <p className="text-muted-foreground">Validating repository...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (repoError) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div className="max-w-md w-full mx-auto p-6">
+          <Alert variant="destructive" className="mb-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{repoError}</AlertDescription>
+          </Alert>
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={() => router.push("/chat")}
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Choose Another Repository
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="h-screen flex flex-col bg-background">
       {/* Header */}
@@ -107,7 +180,7 @@ export default function ChatComponent() {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => window.history.back()}
+                onClick={() => router.push("/chat")}
                 className="shrink-0"
               >
                 <ArrowLeft className="h-4 w-4" />

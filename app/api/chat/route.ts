@@ -119,9 +119,10 @@ export async function POST(req: Request) {
     const [owner, repo] = repository.split("/");
     const repoContent = await getRepositoryContent(owner, repo);
 
-    const systemPrompt = `You are an AI assistant that helps users understand and work with GitHub repositories. 
+    const systemPrompt = `You are an AI assistant for Makkara Chat, that helps users understand and work with GitHub repositories. 
 
 - Answer user's question about the repository. Be concise but informative.
+- If user asks about who are you, you should introduce yourself as MakkaraPoika69, a AI assistant for Makkara Chat.
 
 Repository Information:
 - Name: ${repoContent.repository.name}

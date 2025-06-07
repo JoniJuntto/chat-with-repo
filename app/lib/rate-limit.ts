@@ -29,7 +29,7 @@ export async function checkRateLimit(req: Request) {
       ipAddress: !id ? ip : null,
     })
     .onConflictDoUpdate({
-      target: [usersTable.id],
+      target: [usersTable.id, usersTable.email],
       set: {
         email: session.user.email,
         ipAddress: !id ? ip : null,
