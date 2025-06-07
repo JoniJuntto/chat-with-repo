@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import prisma from "@/app/lib/db";
+import { db } from "@/app/db";
+import { chatsTable } from "@/app/db/schema";
+import { desc, eq } from "drizzle-orm";
 
 export async function GET(request: Request) {
   try {
@@ -21,11 +23,12 @@ export async function GET(request: Request) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const messages = await prisma.chatHistory.findMany({
-      where: { userId },
-      orderBy: { createdAt: "desc" },
-      take: 50, // Limit to last 50 messages
-    });
+    const messages = await db
+      .select()
+      .from(chatsTable)
+      .where(eq(chatsTable.userId, userId))
+      .orderBy(desc(chatsTable.createdAt))
+      .limit(50);
 
     return NextResponse.json(messages);
   } catch (error) {

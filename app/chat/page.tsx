@@ -1,11 +1,10 @@
 "use client";
-import { Github, MessageSquare, Settings, Search } from "lucide-react";
+import { Github } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar-group";
 

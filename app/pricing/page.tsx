@@ -1,5 +1,4 @@
 import { auth } from "@/auth";
-import { Check } from "lucide-react";
 
 const plan = {
   name: "Makkara Pro",

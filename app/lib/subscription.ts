@@ -1,10 +1,13 @@
-import prisma from "./db";
+import { db } from "@/app/db";
+import { subscriptionTable } from "@/app/db/schema";
+import { eq } from "drizzle-orm";
 
 export async function hasActiveSubscription(userId: string): Promise<boolean> {
-  const subscription = await prisma.subscription.findUnique({
-    where: { userId },
-  });
-  return subscription?.isActive || false;
+  const [subscription] = await db
+    .select()
+    .from(subscriptionTable)
+    .where(eq(subscriptionTable.userId, userId));
+  return subscription.isActive || false;
 }
 
 export async function setSubscriptionStatus(
@@ -13,24 +16,27 @@ export async function setSubscriptionStatus(
   stripeCustomerId?: string,
   stripeSubscriptionId?: string
 ): Promise<void> {
-  await prisma.subscription.upsert({
-    where: { userId },
-    create: {
+  await db
+    .insert(subscriptionTable)
+    .values({
       userId,
       isActive,
       stripeCustomerId,
       stripeSubscriptionId,
-    },
-    update: {
-      isActive,
-      stripeCustomerId,
-      stripeSubscriptionId,
-    },
-  });
+    })
+    .onConflictDoUpdate({
+      target: [subscriptionTable.userId],
+      set: {
+        isActive,
+        stripeCustomerId,
+        stripeSubscriptionId,
+      },
+    })
+    .returning();
 }
 
 export async function removeSubscription(userId: string): Promise<void> {
-  await prisma.subscription.delete({
-    where: { userId },
-  });
+  await db
+    .delete(subscriptionTable)
+    .where(eq(subscriptionTable.userId, userId));
 }

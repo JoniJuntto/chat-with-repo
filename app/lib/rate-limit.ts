@@ -1,6 +1,8 @@
 import { auth } from "@/auth";
 import { hasActiveSubscription } from "./subscription";
-import prisma from "./db";
+import { db } from "@/app/db";
+import { rateLimitTable, usersTable } from "@/app/db/schema";
+import { eq } from "drizzle-orm";
 
 // Reset rate limits daily
 const RATE_LIMIT_RESET_HOURS = 24;
@@ -18,21 +20,22 @@ export async function checkRateLimit(req: Request) {
       isAuthenticated,
     };
   }
-  // Get or create user
-  const user = await prisma.user.upsert({
-    where: {
-      id: id || `ip_${ip}`,
-    },
-    create: {
+
+  const [user] = await db
+    .insert(usersTable)
+    .values({
       id: id || `ip_${ip}`,
       email: session.user.email,
       ipAddress: !id ? ip : null,
-    },
-    update: {
-      email: session.user.email,
-      ipAddress: !id ? ip : null,
-    },
-  });
+    })
+    .onConflictDoUpdate({
+      target: [usersTable.id],
+      set: {
+        email: session.user.email,
+        ipAddress: !id ? ip : null,
+      },
+    })
+    .returning();
 
   // If user has an active subscription, they have unlimited messages
   if (isAuthenticated && (await hasActiveSubscription(user.id))) {
@@ -45,33 +48,35 @@ export async function checkRateLimit(req: Request) {
   }
 
   // Get current rate limit
-  let rateLimit = await prisma.rateLimit.findUnique({
-    where: { userId: user.id },
-  });
+  let [rateLimit] = await db
+    .select()
+    .from(rateLimitTable)
+    .where(eq(rateLimitTable.userId, user.id));
 
   const now = new Date();
   const shouldReset =
     rateLimit &&
-    now.getTime() - rateLimit.lastReset.getTime() >
+    now.getTime() - new Date(rateLimit.lastReset ?? "").getTime() >
       RATE_LIMIT_RESET_HOURS * 60 * 60 * 1000;
 
   // Create or update rate limit
   if (!rateLimit) {
-    rateLimit = await prisma.rateLimit.create({
-      data: {
+    [rateLimit] = await db
+      .insert(rateLimitTable)
+      .values({
         userId: user.id,
         messageCount: 0,
-        lastReset: now,
-      },
-    });
+        lastReset: now.toISOString(),
+      })
+      .returning();
   } else if (shouldReset) {
-    rateLimit = await prisma.rateLimit.update({
-      where: { userId: user.id },
-      data: {
+    [rateLimit] = await db
+      .update(rateLimitTable)
+      .set({
         messageCount: 0,
-        lastReset: now,
-      },
-    });
+        lastReset: now.toISOString(),
+      })
+      .returning();
   }
 
   const maxMessages = isAuthenticated ? 3 : 1;
@@ -86,11 +91,11 @@ export async function checkRateLimit(req: Request) {
     };
   }
 
-  // Increment message count
-  rateLimit = await prisma.rateLimit.update({
-    where: { userId: user.id },
-    data: { messageCount: { increment: 1 } },
-  });
+  [rateLimit] = await db
+    .update(rateLimitTable)
+    .set({ messageCount: currentCount + 1 })
+    .where(eq(rateLimitTable.userId, user.id))
+    .returning();
 
   return {
     allowed: true,

@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  ArrowRight,
-  MessageSquare,
-  Github,
-  Star,
-  Bot,
-  User,
-} from "lucide-react";
+import { ArrowRight, MessageSquare, Star, Bot, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -66,7 +59,8 @@ const HeroSection: React.FC = () => {
                       </div>
                       <div className="bg-muted rounded-lg py-2 px-3 break-words">
                         <p className="text-sm">
-                          How does React's fiber reconciliation algorithm work?
+                          How does React&apos;s fiber reconciliation algorithm
+                          work?
                         </p>
                       </div>
                     </div>
@@ -86,7 +80,7 @@ const HeroSection: React.FC = () => {
                       </div>
                       <div className="bg-primary rounded-lg py-2 px-3 break-words">
                         <p className="text-sm text-primary-foreground">
-                          React Fiber is a complete rewrite of React's
+                          React Fiber is a complete rewrite of React&apos;s
                           reconciliation algorithm. It breaks the rendering work
                           into chunks and can pause and resume work to avoid
                           blocking the main thread.
@@ -127,7 +121,7 @@ const HeroSection: React.FC = () => {
                       </div>
                       <div className="bg-primary rounded-lg py-2 px-3 break-words">
                         <p className="text-sm text-primary-foreground">
-                          Here's an example from the repo:
+                          Here&apos;s an example from the repo:
                         </p>
                         <pre className="mt-2 text-xs bg-muted text-accent-foreground p-2 rounded overflow-x-auto whitespace-pre-wrap">
                           <code>{`useEffect(() => {

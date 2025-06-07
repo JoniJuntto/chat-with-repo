@@ -12,12 +12,6 @@ import {
   SidebarSeparator,
 } from "@/components/ui/sidebar";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@radix-ui/react-dropdown-menu";
-import {
   LayoutDashboard,
   FolderKanban,
   Settings,
@@ -25,7 +19,6 @@ import {
   BarChart3,
   MessageSquare,
   HelpCircle,
-  ChevronDown,
   LogOut,
 } from "lucide-react";
 

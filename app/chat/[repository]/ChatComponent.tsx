@@ -142,8 +142,8 @@ export default function ChatComponent() {
                     Ready to explore {repository}
                   </h3>
                   <p className="text-muted-foreground mb-8">
-                    Ask me anything about this repository's code, architecture,
-                    or implementation details.
+                    Ask me anything about this repository&apos;s code,
+                    architecture, or implementation details.
                   </p>
                 </div>
 

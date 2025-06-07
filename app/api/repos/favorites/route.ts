@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import prisma from "@/app/lib/db";
+import { db } from "@/app/db";
+import { favoriteReposTable } from "@/app/db/schema";
+import { and, desc, eq } from "drizzle-orm";
 
 // GET /api/repos/favorites - Get user's favorite repositories
 export async function GET(request: Request) {
@@ -22,10 +24,11 @@ export async function GET(request: Request) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const repos = await prisma.favoriteRepository.findMany({
-      where: { userId },
-      orderBy: { createdAt: "desc" },
-    });
+    const repos = await db
+      .select()
+      .from(favoriteReposTable)
+      .where(eq(favoriteReposTable.userId, userId))
+      .orderBy(desc(favoriteReposTable.createdAt));
 
     return NextResponse.json(repos);
   } catch (error) {
@@ -65,12 +68,15 @@ export async function POST(request: Request) {
     const [, owner, name] = match;
 
     // Check if repository already exists in favorites
-    const existingRepo = await prisma.favoriteRepository.findFirst({
-      where: {
-        userId,
-        repoUrl,
-      },
-    });
+    const existingRepo = await db
+      .select()
+      .from(favoriteReposTable)
+      .where(
+        and(
+          eq(favoriteReposTable.userId, userId),
+          eq(favoriteReposTable.repoUrl, repoUrl)
+        )
+      );
 
     if (existingRepo) {
       return new NextResponse("Repository already in favorites", {
@@ -78,14 +84,15 @@ export async function POST(request: Request) {
       });
     }
 
-    const repo = await prisma.favoriteRepository.create({
-      data: {
+    const repo = await db
+      .insert(favoriteReposTable)
+      .values({
         userId,
         repoUrl,
         owner,
         name,
-      },
-    });
+      })
+      .returning();
 
     return NextResponse.json(repo);
   } catch (error) {

@@ -2,7 +2,6 @@ import { Message } from "@ai-sdk/react";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus as codeStyle } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { cn } from "@/lib/utils";
 
 export const AssistantMessageRenderer = ({ message }: { message: Message }) => {
   return (
