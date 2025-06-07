@@ -15,7 +15,7 @@ const timestamps = {
 
 export const rateLimitTable = pgTable("rate_limit", {
   id: uuid().primaryKey().defaultRandom(),
-  userId: uuid()
+  userId: text()
     .notNull()
     .references(() => usersTable.id, {
       onDelete: "cascade",
@@ -27,7 +27,7 @@ export const rateLimitTable = pgTable("rate_limit", {
 
 export const subscriptionTable = pgTable("subscription", {
   id: uuid().primaryKey().defaultRandom(),
-  userId: uuid()
+  userId: text()
     .notNull()
     .references(() => usersTable.id, {
       onDelete: "cascade",
@@ -40,7 +40,7 @@ export const subscriptionTable = pgTable("subscription", {
 
 export const favoriteReposTable = pgTable("favorite_repos", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  userId: uuid()
+  userId: text()
     .notNull()
     .references(() => usersTable.id, {
       onDelete: "cascade",
@@ -51,8 +51,8 @@ export const favoriteReposTable = pgTable("favorite_repos", {
   ...timestamps,
 });
 export const usersTable = pgTable("users", {
-  id: uuid().primaryKey(),
-  email: varchar({ length: 255 }).notNull().unique(),
+  id: text("id").primaryKey(),
+  email: varchar({ length: 255 }).unique(),
   ipAddress: varchar({ length: 255 }),
   rateLimit: integer().notNull().default(0),
   lastReset: timestamp({ mode: "string" }).defaultNow(),
@@ -78,7 +78,7 @@ export const aiModelsTable = pgTable("ai_models", {
 
 export const chatsTable = pgTable("chats", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id")
+  userId: text("user_id")
     .notNull()
     .references(() => usersTable.id),
   title: varchar("title", { length: 255 }),

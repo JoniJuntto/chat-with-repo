@@ -15,8 +15,8 @@ const HowItWorksSection: React.FC = () => {
             How Chat with Repo Works
           </h2>
           <p className="text-xl text-muted-foreground leading-relaxed">
-            Get started in seconds with just a GitHub URL. No complex setup or
-            configuration required.
+            Get started in seconds with just a GitHub repository. No complex
+            setup or configuration required.
           </p>
         </div>
 
@@ -25,9 +25,9 @@ const HowItWorksSection: React.FC = () => {
             {
               number: 1,
               icon: <GitBranch className="h-6 w-6" />,
-              title: "Enter a GitHub Repository URL",
+              title: "Enter a GitHub Repository",
               description:
-                "Paste the URL of any public GitHub repository you want to explore or understand.",
+                "Paste the name of any public GitHub repository you want to explore or understand. (e.g. facebook/react)",
             },
             {
               number: 2,

@@ -149,7 +149,6 @@ export default function ChatComponent() {
     input,
     handleInputChange,
     handleSubmit: originalHandleSubmit,
-    error,
     isLoading,
     setInput,
   } = useChat({

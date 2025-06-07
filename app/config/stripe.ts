@@ -1,11 +1,6 @@
 import Stripe from "stripe";
+import { serverEnvs } from "../env/server";
 
-if (!process.env.STRIPE_TEST_SECRET_KEY) {
-  throw new Error(
-    "STRIPE_TEST_SECRET_KEY is missing. Please set the environment variable."
-  );
-}
-
-const stripe = new Stripe(process.env.STRIPE_TEST_SECRET_KEY);
+const stripe = new Stripe(serverEnvs.STRIPE_SECRET_KEY);
 
 export default stripe;

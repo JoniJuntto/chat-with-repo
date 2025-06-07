@@ -5,14 +5,11 @@ import {
   setSubscriptionStatus,
   removeSubscription,
 } from "@/app/lib/subscription";
+import { serverEnvs } from "@/app/env/server";
 
-// This is your Stripe webhook secret for testing your endpoint locally.
-
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-console.log(webhookSecret);
+const webhookSecret = serverEnvs.STRIPE_WEBHOOK_SECRET;
 
 export async function POST(req: NextRequest) {
-  console.log("Received Stripe webhook request");
   try {
     const body = await req.text();
     const signature = await req.headers.get("stripe-signature");

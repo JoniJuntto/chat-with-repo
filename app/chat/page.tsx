@@ -252,6 +252,8 @@ const Content = () => {
                       src={repoInfo.avatar_url}
                       alt={`${repoInfo.owner}'s avatar`}
                       className="w-16 h-16 rounded-full border-2 border-border"
+                      width={64}
+                      height={64}
                     />
                     <div className="flex-1 space-y-2">
                       <div className="flex items-center gap-3 flex-wrap">

@@ -12,26 +12,18 @@ export async function checkRateLimit(req: Request) {
   const ip = req.headers.get("x-forwarded-for") || "unknown";
   const id = session?.user?.id;
   const isAuthenticated = !!session?.user;
-  if (!session?.user?.email) {
-    return {
-      allowed: false,
-      remaining: 0,
-      limit: 1,
-      isAuthenticated,
-    };
-  }
 
   const [user] = await db
     .insert(usersTable)
     .values({
       id: id || `ip_${ip}`,
-      email: session.user.email,
+      email: session?.user?.email || null, // Allow null email for unauthenticated users
       ipAddress: !id ? ip : null,
     })
     .onConflictDoUpdate({
       target: [usersTable.id],
       set: {
-        email: session.user.email,
+        email: session?.user?.email || null, // Allow null email for unauthenticated users
         ipAddress: !id ? ip : null,
       },
     })
@@ -79,7 +71,7 @@ export async function checkRateLimit(req: Request) {
       .returning();
   }
 
-  const maxMessages = isAuthenticated ? 3 : 1;
+  const maxMessages = isAuthenticated ? 10 : 3;
   const currentCount = rateLimit.messageCount;
 
   if (currentCount >= maxMessages) {

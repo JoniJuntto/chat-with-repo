@@ -1,179 +1,200 @@
 import React from "react";
-import { ArrowRight, MessageSquare, Star, Bot, User } from "lucide-react";
+import { ArrowRight, Star, Bot, User, Github } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 
 const HeroSection: React.FC = () => {
   return (
-    <section className="relative pb-16 pt-12 md:pb-24 overflow-hidden">
+    <section className="relative pt-20 pb-32 overflow-hidden">
+      {/* Floating elements */}
+      <div className="absolute top-20 left-10 w-20 h-20 bg-gradient-to-r from-blue-400/20 to-purple-400/20 rounded-full blur-xl animate-pulse" />
+      <div className="absolute top-40 right-20 w-32 h-32 bg-gradient-to-r from-green-400/20 to-blue-400/20 rounded-full blur-xl animate-pulse delay-1000" />
+
       <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row items-center gap-12">
-          <div className="md:w-1/2">
-            <div className="max-w-xl">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 bg-gradient-to-r from-red-400 via-blue-400 to-green-400 bg-clip-text text-transparent">
-                Makkara
-              </h1>
-              <div className="inline-flex items-center rounded-full border px-3 py-1 text-sm mb-6 bg-muted/50">
-                <Star className="h-4 w-4 mr-2 text-yellow-400" />
-                <span className="text-muted-foreground">
-                  New: AI-powered code understanding
-                </span>
+        {/* Announcement Banner */}
+        <div className="text-center mb-8">
+          <Badge variant="secondary" className="px-4 py-2 text-sm font-medium">
+            <Star className="h-4 w-4 mr-2 text-yellow-400" />
+            New: Enhanced AI-powered code understanding
+          </Badge>
+        </div>
+
+        <div className="flex flex-col lg:flex-row items-center gap-16">
+          {/* Left Content */}
+          <div className="lg:w-1/2 text-center lg:text-left">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-8">
+              <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Chat With Any
+              </span>
+              <br />
+              <span className="text-foreground">GitHub Repo</span>
+            </h1>
+
+            <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl">
+              Transform code exploration with AI. Ask questions, understand
+              architecture, and debug faster than ever before.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-12">
+              <Link href="/chat">
+                <Button
+                  size="lg"
+                  className="text-lg px-8 py-4 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700"
+                >
+                  Start Chatting
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+            </div>
+
+            {/* Trust indicators */}
+            <div className="flex items-center justify-center lg:justify-start gap-8 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <div className="flex -space-x-2">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div
+                      key={i}
+                      className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-400 to-purple-400 border-2 border-background"
+                    />
+                  ))}
+                </div>
+                <span>1000+ developers</span>
               </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 bg-gradient-to-r from-green-400 via-blue-400 to-red-400 bg-clip-text text-transparent">
-                Chat With Any GitHub Repo Using AI
-              </h1>
-              <p className="text-xl text-muted-foreground mb-8">
-                Instantly understand any codebase through natural conversation.
-                No more endless file browsing or confusing documentation.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/chat">
-                  <Button size="lg" className="bg-primary hover:bg-primary/90">
-                    Try It Now
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
+              <div className="flex items-center gap-1">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <Star
+                    key={i}
+                    className="w-4 h-4 fill-yellow-400 text-yellow-400"
+                  />
+                ))}
+                <span className="ml-1">5.0 rating</span>
               </div>
             </div>
           </div>
-          <div className="md:w-1/2">
-            <Card className="bg-card/50 backdrop-blur-sm border-border/50 shadow-xl">
-              <CardContent className="p-6">
-                <div className="flex items-center border-b border-border pb-3 mb-4">
-                  <MessageSquare className="h-5 w-5 text-primary mr-2" />
-                  <div className="text-sm font-medium">react/react</div>
-                </div>
-                <div className="space-y-6 max-h-[500px] overflow-y-auto pr-2">
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <User className="h-4 w-4 text-primary" />
-                    </div>
-                    <div className="flex flex-col gap-1 min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-medium">You</span>
-                        <span className="text-xs text-muted-foreground">
-                          2:45 PM
-                        </span>
-                      </div>
-                      <div className="bg-muted rounded-lg py-2 px-3 break-words">
-                        <p className="text-sm">
-                          How does React&apos;s fiber reconciliation algorithm
-                          work?
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <Bot className="h-4 w-4 text-primary" />
-                    </div>
-                    <div className="flex flex-col gap-1 min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-medium">
-                          AI Assistant
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          2:45 PM
-                        </span>
-                      </div>
-                      <div className="bg-primary rounded-lg py-2 px-3 break-words">
-                        <p className="text-sm text-primary-foreground">
-                          React Fiber is a complete rewrite of React&apos;s
-                          reconciliation algorithm. It breaks the rendering work
-                          into chunks and can pause and resume work to avoid
-                          blocking the main thread.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <User className="h-4 w-4 text-primary" />
-                    </div>
-                    <div className="flex flex-col gap-1 min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-medium">You</span>
-                        <span className="text-xs text-muted-foreground">
-                          2:46 PM
-                        </span>
-                      </div>
-                      <div className="bg-muted rounded-lg py-2 px-3 break-words">
-                        <p className="text-sm">
-                          Show me an example of how to use useEffect.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <Bot className="h-4 w-4 text-primary" />
-                    </div>
-                    <div className="flex flex-col gap-1 min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-medium">
-                          AI Assistant
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          2:46 PM
-                        </span>
-                      </div>
-                      <div className="bg-primary rounded-lg py-2 px-3 break-words">
-                        <p className="text-sm text-primary-foreground">
-                          Here&apos;s an example from the repo:
-                        </p>
-                        <pre className="mt-2 text-xs bg-muted text-accent-foreground p-2 rounded overflow-x-auto whitespace-pre-wrap">
-                          <code>{`useEffect(() => {
-                            document.title = \`You clicked \${count} times\`;
-                          }, [count]);`}</code>
-                        </pre>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-6 flex gap-2">
-                  <Input
-                    type="text"
-                    placeholder="Ask about this repository..."
-                    className="flex-1"
-                  />
-                  <Link href="/chat">
-                    <Button size="icon" className="shrink-0">
-                      <ArrowRight className="h-4 w-4" />
-                    </Button>
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
 
-        {/* Stats/Social Proof */}
-        <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8">
-          {[
-            { value: "100+", label: "Repositories Analyzed" },
-            { value: "24/7", label: "AI Availability" },
-            { value: "1000+", label: "Developer Hours Saved" },
-            { value: "5⭐", label: "Average Rating" },
-          ].map((stat, index) => (
-            <Card
-              key={index}
-              className="bg-card/50 backdrop-blur-sm border-border/50"
-            >
-              <CardContent className="p-6 text-center">
-                <div className="text-3xl font-bold text-primary">
-                  {stat.value}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  {stat.label}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+          {/* Right Demo */}
+          <div className="lg:w-1/2">
+            <div className="relative">
+              {/* Glow effect */}
+              <div className="absolute -inset-4 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-2xl blur-xl" />
+
+              <Card className="relative bg-card/80 backdrop-blur-xl border-border/50 shadow-2xl">
+                <CardContent className="p-0">
+                  {/* Header */}
+                  <div className="flex items-center justify-between p-6 border-b border-border/50">
+                    <div className="flex items-center gap-3">
+                      <div className="w-3 h-3 rounded-full bg-red-400" />
+                      <div className="w-3 h-3 rounded-full bg-yellow-400" />
+                      <div className="w-3 h-3 rounded-full bg-green-400" />
+                    </div>
+                    <div className="flex items-center gap-2 text-sm font-medium">
+                      <Github className="h-4 w-4" />
+                      facebook/react
+                    </div>
+                  </div>
+
+                  {/* Chat Messages */}
+                  <div className="p-6 space-y-6 max-h-[400px] overflow-y-auto">
+                    <ChatMessage
+                      type="user"
+                      message="How does React's reconciliation work?"
+                      time="2:45 PM"
+                    />
+                    <ChatMessage
+                      type="ai"
+                      message="React's reconciliation is the process of comparing the new virtual DOM tree with the previous one. It uses a diffing algorithm to identify changes and updates only the necessary DOM elements, making it highly efficient."
+                      time="2:45 PM"
+                      showCode={true}
+                    />
+                    <ChatMessage
+                      type="user"
+                      message="Show me an example of useEffect"
+                      time="2:46 PM"
+                    />
+                  </div>
+
+                  {/* Input */}
+                  <div className="p-6 border-t border-border/50">
+                    <div className="flex gap-3">
+                      <Input
+                        placeholder="Ask about this repository..."
+                        className="flex-1 bg-muted/50"
+                      />
+                      <Button size="icon" className="shrink-0">
+                        <ArrowRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </div>
       </div>
     </section>
+  );
+};
+
+interface ChatMessageProps {
+  type: "user" | "ai";
+  message: string;
+  time: string;
+  showCode?: boolean;
+}
+
+const ChatMessage: React.FC<ChatMessageProps> = ({
+  type,
+  message,
+  time,
+  showCode,
+}) => {
+  return (
+    <div className={`flex gap-3 ${type === "user" ? "justify-end" : ""}`}>
+      {type === "ai" && (
+        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center shrink-0">
+          <Bot className="h-4 w-4 text-white" />
+        </div>
+      )}
+
+      <div className={`max-w-[80%] ${type === "user" ? "order-first" : ""}`}>
+        <div className="flex items-center gap-2 mb-1">
+          <span className="text-xs font-medium">
+            {type === "user" ? "You" : "AI Assistant"}
+          </span>
+          <span className="text-xs text-muted-foreground">{time}</span>
+        </div>
+
+        <div
+          className={`rounded-2xl px-4 py-3 ${
+            type === "user"
+              ? "bg-gradient-to-r from-indigo-500 to-purple-600 text-white ml-auto"
+              : "bg-muted/50"
+          }`}
+        >
+          <p className="text-sm">{message}</p>
+          {showCode && (
+            <pre className="mt-3 text-xs bg-background/50 p-3 rounded-lg overflow-x-auto">
+              <code>{`function reconcileChildren(current, workInProgress, nextChildren) {
+  if (current === null) {
+    workInProgress.child = mountChildFibers(/* ... */);
+  } else {
+    workInProgress.child = reconcileChildFibers(/* ... */);
+  }
+}`}</code>
+            </pre>
+          )}
+        </div>
+      </div>
+
+      {type === "user" && (
+        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center shrink-0">
+          <User className="h-4 w-4 text-white" />
+        </div>
+      )}
+    </div>
   );
 };
 
