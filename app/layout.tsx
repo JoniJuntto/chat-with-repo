@@ -4,6 +4,8 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SessionProvider } from "next-auth/react";
+import { Analytics } from "@vercel/analytics/next"
+import CookieConsent from "@/components/CookieConsent";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,6 +33,7 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background`}
         >
+         
           <ThemeProvider
             attribute="class"
             defaultTheme="dark"
@@ -38,9 +41,12 @@ export default function RootLayout({
             enableSystem={false}
             disableTransitionOnChange
           >
+            <Analytics />
+            <CookieConsent />
             <Toaster />
             {children}
           </ThemeProvider>
+         
         </body>
       </SessionProvider>
     </html>
