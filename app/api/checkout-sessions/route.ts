@@ -4,6 +4,8 @@ import stripe from "@/app/config/stripe";
 import { getProduct } from "@/lib/utils";
 import { auth } from "@/auth";
 import { serverEnvs } from "@/app/env/server";
+import { db } from "@/app/db";
+import { usersTable } from "@/app/db/schema";
 
 export async function POST() {
   const headersList = await headers();
@@ -15,6 +17,17 @@ export async function POST() {
       return NextResponse.redirect(`${headersList.get("origin")}/login`, {
         status: 303,
       });
+    }
+    // Ensure the authenticated user exists in the database so that
+    // subscription webhooks can reference a valid user record
+    if (session.user?.id) {
+      await db
+        .insert(usersTable)
+        .values({ id: session.user.id, email: session.user.email || null })
+        .onConflictDoUpdate({
+          target: [usersTable.id],
+          set: { email: session.user.email || null },
+        });
     }
     const checkoutSession = await stripe.checkout.sessions.create({
       line_items: [
