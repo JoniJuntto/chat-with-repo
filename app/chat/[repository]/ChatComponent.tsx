@@ -113,6 +113,7 @@ export default function ChatComponent() {
   const [repoError, setRepoError] = useState<string | null>(null);
   const [isValidating, setIsValidating] = useState(true);
   const [model, setModel] = useState<"gemini" | "gpt-4o">("gemini");
+  const [harshness, setHarshness] = useState(5);
   const router = useRouter();
 
   useEffect(() => {
@@ -168,7 +169,7 @@ export default function ChatComponent() {
     setInput,
   } = useChat({
     api: "/api/chat",
-    body: { repository, model },
+    body: { repository, model, harshness },
     onError: (error) => {
       try {
         const errorData = JSON.parse(error.message);
@@ -193,7 +194,7 @@ export default function ChatComponent() {
     if (!input.trim() || isLoading || rateLimitError) return;
 
     setRateLimitError(null);
-    trackEvent("message_sent", { model });
+    trackEvent("message_sent", { model, harshness });
     await originalHandleSubmit(e);
   };
 
@@ -520,6 +521,19 @@ export default function ChatComponent() {
               </Alert>
             </div>
           )}
+          
+          <div className="max-w-4xl mx-auto mb-4 flex items-center gap-3">
+            <span className="text-xs">Mom</span>
+            <input
+              type="range"
+              min={0}
+              max={10}
+              value={harshness}
+              onChange={(e) => setHarshness(Number(e.target.value))}
+              className="flex-1"
+            />
+            <span className="text-xs">Linus Torvalds</span>
+          </div>
 
           <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
             <div className="flex gap-3 p-2 bg-background rounded-xl border border-border/50 shadow-sm focus-within:border-primary/50 focus-within:shadow-md transition-all duration-200">
