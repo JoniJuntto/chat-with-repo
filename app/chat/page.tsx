@@ -11,8 +11,8 @@ import {
   Code2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
+import { useState, useEffect, useMemo } from "react";
+import { useSession, signIn } from "next-auth/react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -23,8 +23,6 @@ import { Octokit } from "@octokit/rest";
 import { Skeleton } from "@/components/ui/skeleton";
 import { clsx } from "clsx";
 import Image from "next/image";
-
-const octokit = new Octokit();
 
 interface RepoInfo {
   name: string;
@@ -67,6 +65,10 @@ export default function ChooseRepoPage() {
 
 const Content = () => {
   const { data: session } = useSession();
+  const octokit = useMemo(
+    () => new Octokit(session?.accessToken ? { auth: session.accessToken } : {}),
+    [session?.accessToken]
+  );
   const [repository, setRepository] = useState("");
   const [isValidating, setIsValidating] = useState(false);
   const [repoInfo, setRepoInfo] = useState<RepoInfo | null>(null);
@@ -115,7 +117,12 @@ const Content = () => {
         setError(null);
       } catch (err) {
         console.error(err);
-        setError("Repository not found. Please check the name and try again.");
+        const error = err as { status?: number };
+        if (!session && error.status === 404) {
+          setError("Private repository. Please sign in to access.");
+        } else {
+          setError("Repository not found. Please check the name and try again.");
+        }
         setRepoInfo(null);
       } finally {
         setIsValidating(false);
@@ -124,7 +131,7 @@ const Content = () => {
 
     const debounceTimer = setTimeout(validateRepo, 500);
     return () => clearTimeout(debounceTimer);
-  }, [repository]);
+  }, [repository, octokit, session]);
 
   useEffect(() => {
     const load = async () => {
@@ -207,10 +214,15 @@ const Content = () => {
             </form>
             <div className="h-5 mt-2 w-full text-center">
               {error && (
-                <p className="text-sm text-destructive flex items-center gap-2 justify-center">
-                  <AlertCircle className="h-4 w-4" />
-                  {error}
-                </p>
+                <div className="flex flex-col items-center gap-2">
+                  <p className="text-sm text-destructive flex items-center gap-2 justify-center">
+                    <AlertCircle className="h-4 w-4" />
+                    {error}
+                  </p>
+                  {!session && error.includes("Private repository") && (
+                    <Button size="sm" onClick={() => signIn("github")}>Sign in</Button>
+                  )}
+                </div>
               )}
               {!error && !repoInfo && repository && (
                 <p className="text-xs text-muted-foreground">Format: owner/repository-name</p>
