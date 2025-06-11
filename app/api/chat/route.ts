@@ -3,6 +3,11 @@ import { openai } from "@ai-sdk/openai";
 import { streamText, type Message } from "ai";
 import { Octokit } from "@octokit/rest";
 import { checkRateLimit } from "@/app/lib/rate-limit";
+import { db } from "@/app/db";
+import { chatsTable } from "@/app/db/schema";
+import { auth } from "@/auth";
+import { ensureDefaultModels, getModelByName } from "@/app/lib/models";
+import { upsertRepository } from "@/app/lib/repositories";
 
 const octokit = new Octokit();
 
@@ -120,6 +125,20 @@ export async function POST(req: Request) {
     const [owner, repo] = repository.split("/");
     const repoContent = await getRepositoryContent(owner, repo);
 
+    await ensureDefaultModels();
+
+    const repoRow = await upsertRepository({
+      url: repoContent.repository.url,
+      owner,
+      name: repoContent.repository.name,
+      description: repoContent.repository.description,
+      language: repoContent.repository.language,
+      stars: repoContent.repository.stars,
+      forks: repoContent.repository.forks,
+    });
+
+    const modelRow = await getModelByName(model);
+
     const systemPrompt = `You are an AI assistant for Makkara Chat, that helps users understand and work with GitHub repositories. 
 
 - Answer user's question about the repository. Be concise but informative.
@@ -166,6 +185,18 @@ Please help the user understand this repository, its structure, functionality, a
       model === "gpt-4o"
         ? openai("gpt-4o")
         : google("gemini-2.5-flash-preview-05-20");
+
+    const session = await auth();
+    const ip = req.headers.get("x-forwarded-for") || "unknown";
+    const userId = session?.user?.id ?? `ip_${ip}`;
+
+    if (modelRow && repoRow) {
+      await db.insert(chatsTable).values({
+        userId,
+        modelId: modelRow.id,
+        repositoryId: repoRow.id,
+      });
+    }
 
     const result = streamText({
       model: aiModel,
