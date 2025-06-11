@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -44,6 +45,11 @@ interface RepoInfo {
   size: number;
 }
 
+interface RecentChat {
+  repository: string;
+  createdAt?: string;
+}
+
 export default function ChooseRepoPage() {
   return (
     <SidebarProvider defaultOpen={true}>
@@ -60,10 +66,12 @@ export default function ChooseRepoPage() {
 }
 
 const Content = () => {
+  const { data: session } = useSession();
   const [repository, setRepository] = useState("");
   const [isValidating, setIsValidating] = useState(false);
   const [repoInfo, setRepoInfo] = useState<RepoInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [recentChats, setRecentChats] = useState<RecentChat[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -117,6 +125,24 @@ const Content = () => {
     const debounceTimer = setTimeout(validateRepo, 500);
     return () => clearTimeout(debounceTimer);
   }, [repository]);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        if (session?.user) {
+          const res = await fetch("/api/chats");
+          const data = await res.json();
+          setRecentChats(data);
+        } else {
+          const local = JSON.parse(localStorage.getItem("chat-history") || "[]");
+          setRecentChats(local);
+        }
+      } catch (err) {
+        console.error("Failed to load chats", err);
+      }
+    };
+    load();
+  }, [session]);
 
   const handleRepositorySubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -325,7 +351,34 @@ const Content = () => {
           </Card>
         </div>
 
-        {/* Popular Repositories */}
+          {/* Recent Chats */}
+          {recentChats.length > 0 && (
+            <Card className="w-full bg-white/10 backdrop-blur border-none shadow-xl rounded-2xl mb-4">
+              <CardHeader className="pb-2">
+                <h3 className="text-base font-semibold">Recent Chats</h3>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {recentChats.map((chat, i) => (
+                    <Button
+                      key={i}
+                      variant="ghost"
+                      className="w-full justify-start text-left hover:bg-muted/40 rounded-xl"
+                      onClick={() => {
+                        const path = chat.repository.replace("https://github.com/", "");
+                        const [owner, name] = path.split("/");
+                        router.push(`/chat/${name}?owner=${owner}`);
+                      }}
+                    >
+                      {chat.repository}
+                    </Button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Popular Repositories */}
         <Card className="w-full bg-white/10 backdrop-blur border-none shadow-xl rounded-2xl">
           <CardHeader className="pb-2">
             <h3 className="text-base font-semibold">Try Popular Repositories</h3>

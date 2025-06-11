@@ -4,6 +4,8 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SessionProvider } from "next-auth/react";
+import { auth } from "@/auth";
+import SignedInHeader from "@/components/SignedInHeader";
 import { Analytics } from "@vercel/analytics/next"
 import CookieConsent from "@/components/CookieConsent";
 
@@ -22,14 +24,16 @@ export const metadata: Metadata = {
   description: "Understand any codebase through natural conversation with AI",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
-      <SessionProvider>
+      <SessionProvider session={session}>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background`}
         >
@@ -43,6 +47,7 @@ export default function RootLayout({
           >
             <Analytics />
             <CookieConsent />
+            {session?.user && <SignedInHeader user={session.user} />}
             <Toaster />
             {children}
           </ThemeProvider>

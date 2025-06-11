@@ -102,3 +102,13 @@ export const chatsTable = pgTable("chats", {
     .references(() => repositoriesTable.id),
   ...timestamps,
 });
+
+export const messagesTable = pgTable("messages", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  chatId: uuid("chat_id")
+    .notNull()
+    .references(() => chatsTable.id, { onDelete: "cascade" }),
+  role: varchar("role", { length: 50 }).notNull(),
+  content: text("content").notNull(),
+  ...timestamps,
+});

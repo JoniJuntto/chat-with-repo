@@ -108,6 +108,7 @@ export default function ChatComponent() {
       : "";
 
   const [repository, setRepository] = useState("");
+
   const [repoInfo, setRepoInfo] = useState<RepoInfo | null>(null);
   const [rateLimitError, setRateLimitError] = useState<string | null>(null);
   const [repoError, setRepoError] = useState<string | null>(null);
@@ -169,7 +170,9 @@ export default function ChatComponent() {
     setInput,
   } = useChat({
     api: "/api/chat",
+
     body: { repository, model, harshness },
+
     onError: (error) => {
       try {
         const errorData = JSON.parse(error.message);
@@ -188,6 +191,33 @@ export default function ChatComponent() {
   useEffect(() => {
     scrollToBottom();
   }, [messages, isLoading]);
+
+  // Save chat history when messages update
+  useEffect(() => {
+    if (isLoading || messages.length === 0 || !repository) return;
+
+    const saveHistory = async () => {
+      try {
+        const local = JSON.parse(
+          localStorage.getItem("chat-history") || "[]"
+        );
+        local.unshift({ repository, messages });
+        localStorage.setItem("chat-history", JSON.stringify(local.slice(0, 5)));
+
+        if (session?.user) {
+          await fetch("/api/chats", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ repository, messages }),
+          });
+        }
+      } catch (err) {
+        console.error("Failed to save chat", err);
+      }
+    };
+
+    saveHistory();
+  }, [messages, isLoading, repository, session]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -519,6 +549,7 @@ export default function ChatComponent() {
                   </div>
                 </AlertDescription>
               </Alert>
+
             </div>
           )}
           
@@ -535,7 +566,9 @@ export default function ChatComponent() {
             <span className="text-xs">Linus Torvalds</span>
           </div>
 
+
           <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
+
             <div className="flex gap-3 p-2 bg-background rounded-xl border border-border/50 shadow-sm focus-within:border-primary/50 focus-within:shadow-md transition-all duration-200">
               <Input
                 value={input}
