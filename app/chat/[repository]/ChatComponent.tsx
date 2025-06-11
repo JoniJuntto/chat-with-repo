@@ -2,7 +2,7 @@
 
 import { useChat } from "@ai-sdk/react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState, useRef, useMemo } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   Send,
   Github,
@@ -39,6 +39,7 @@ import {
   trackEvent,
 } from "@/instrumentation-client";
 
+const octokit = new Octokit();
 
 const SUGGESTED_QUESTIONS = [
   {
@@ -94,10 +95,6 @@ interface RepoInfo {
 
 export default function ChatComponent() {
   const { data: session } = useSession();
-  const octokit = useMemo(
-    () => new Octokit(session?.accessToken ? { auth: session.accessToken } : {}),
-    [session?.accessToken]
-  );
   const searchParams = useSearchParams();
   const params = useParams();
   const messagesEndRef = useRef<HTMLDivElement>(null);

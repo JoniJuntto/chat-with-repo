@@ -9,7 +9,9 @@ import { auth } from "@/auth";
 import { ensureDefaultModels, getModelByName } from "@/app/lib/models";
 import { upsertRepository } from "@/app/lib/repositories";
 
-async function getRepositoryContent(octokit: Octokit, owner: string, repo: string) {
+const octokit = new Octokit();
+
+async function getRepositoryContent(owner: string, repo: string) {
   try {
     const { data: repoData } = await octokit.rest.repos.get({
       owner,
@@ -123,12 +125,9 @@ export async function POST(req: Request) {
       });
     }
     const session = await auth();
-    const octokit = new Octokit(
-      session?.accessToken ? { auth: session.accessToken as string } : {}
-    );
 
     const [owner, repo] = repository.split("/");
-    const repoContent = await getRepositoryContent(octokit, owner, repo);
+    const repoContent = await getRepositoryContent(owner, repo);
 
     await ensureDefaultModels();
 

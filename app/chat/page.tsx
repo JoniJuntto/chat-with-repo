@@ -23,6 +23,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { clsx } from "clsx";
 import Image from "next/image";
 import { signIn } from "@/auth";
+import { Octokit } from "@octokit/rest";
 
 interface RepoInfo {
   name: string;
@@ -47,6 +48,8 @@ interface RecentChat {
   repository: string;
   createdAt?: string;
 }
+
+const octokit = new Octokit();
 
 export default function ChooseRepoPage() {
   return (
@@ -127,7 +130,7 @@ const Content = () => {
 
     const debounceTimer = setTimeout(validateRepo, 500);
     return () => clearTimeout(debounceTimer);
-  }, [repository]);
+  }, [repository, session]);
 
   useEffect(() => {
     const load = async () => {
