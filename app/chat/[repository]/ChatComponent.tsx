@@ -2,7 +2,7 @@
 
 import { useChat } from "@ai-sdk/react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import {
   Send,
   Github,
@@ -39,7 +39,6 @@ import {
   trackEvent,
 } from "@/instrumentation-client";
 
-const octokit = new Octokit();
 
 const SUGGESTED_QUESTIONS = [
   {
@@ -95,6 +94,10 @@ interface RepoInfo {
 
 export default function ChatComponent() {
   const { data: session } = useSession();
+  const octokit = useMemo(
+    () => new Octokit(session?.accessToken ? { auth: session.accessToken } : {}),
+    [session?.accessToken]
+  );
   const searchParams = useSearchParams();
   const params = useParams();
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -149,9 +152,14 @@ export default function ChatComponent() {
         setRepoError(null);
       } catch (error) {
         console.error(error);
-        setRepoError(
-          "Repository not found. Please check the URL and try again."
-        );
+        const err = error as { status?: number };
+        if (!session && err.status === 404) {
+          setRepoError("Private repository. Please sign in to access.");
+        } else {
+          setRepoError(
+            "Repository not found. Please check the URL and try again."
+          );
+        }
         toast.error("Repository not found");
       } finally {
         setIsValidating(false);
@@ -159,7 +167,7 @@ export default function ChatComponent() {
     };
 
     validateRepo();
-  }, [owner, repo]);
+  }, [owner, repo, octokit, session]);
 
   const {
     messages,
@@ -274,7 +282,9 @@ export default function ChatComponent() {
               <AlertCircle className="h-8 w-8 text-destructive" />
             </div>
             <h3 className="text-lg font-semibold text-foreground mb-2">
-              Repository Not Found
+              {repoError.includes("Private repository")
+                ? "Private Repository"
+                : "Repository Not Found"}
             </h3>
           </div>
 
@@ -282,6 +292,10 @@ export default function ChatComponent() {
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>{repoError}</AlertDescription>
           </Alert>
+
+          {!session && repoError.includes("Private repository") && (
+            <Button onClick={() => signIn("github")}>Sign in with GitHub</Button>
+          )}
 
           <Button
             variant="outline"
