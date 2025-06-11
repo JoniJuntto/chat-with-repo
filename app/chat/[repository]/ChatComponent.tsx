@@ -335,7 +335,7 @@ export default function ChatComponent() {
                 <Separator className="my-8" />
 
                 {/* Enhanced Suggested Questions */}
-                <div className="space-y-6">
+                <div className="space-y-6  hidden md:block">
                   <div className="flex items-center gap-3">
                     <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
                       <Sparkles className="h-4 w-4 text-amber-600" />
@@ -345,12 +345,12 @@ export default function ChatComponent() {
                     </h4>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="gap-3">
                     {SUGGESTED_QUESTIONS.map((question, index) => (
                       <Button
                         key={index}
                         variant="outline"
-                        className="h-auto p-4 text-left justify-start hover:bg-muted/50 hover:border-primary/30 transition-all duration-200"
+                        className="h-auto m-1 p-4 text-left justify-start hover:bg-muted/50 hover:border-primary/30 transition-all duration-200"
                         onClick={() => handleSuggestedQuestion(question.text)}
                       >
                         <div className="flex items-start gap-3 w-full">

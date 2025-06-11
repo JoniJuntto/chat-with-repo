@@ -9,21 +9,16 @@ import Link from "next/link";
 const HeroSection: React.FC = () => {
   return (
     <section className="relative pt-20 pb-32 overflow-hidden">
-      {/* Floating elements */}
       <div className="absolute top-20 left-10 w-20 h-20 bg-gradient-to-r from-blue-400/20 to-purple-400/20 rounded-full blur-xl animate-pulse" />
       <div className="absolute top-40 right-20 w-32 h-32 bg-gradient-to-r from-green-400/20 to-blue-400/20 rounded-full blur-xl animate-pulse delay-1000" />
-
       <div className="container mx-auto px-4">
-        {/* Announcement Banner */}
         <div className="text-center mb-8">
           <Badge variant="secondary" className="px-4 py-2 text-sm font-medium">
             <Star className="h-4 w-4 mr-2 text-yellow-400" />
             New: Enhanced AI-powered code understanding
           </Badge>
         </div>
-
         <div className="flex flex-col lg:flex-row items-center gap-16">
-          {/* Left Content */}
           <div className="lg:w-1/2 text-center lg:text-left">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-8">
               <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
@@ -32,12 +27,10 @@ const HeroSection: React.FC = () => {
               <br />
               <span className="text-foreground">GitHub Repo</span>
             </h1>
-
             <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl">
               Transform code exploration with AI. Ask questions, understand
               architecture, and debug faster than ever before.
             </p>
-
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-12">
               <Link href="/chat">
                 <Button
@@ -49,8 +42,6 @@ const HeroSection: React.FC = () => {
                 </Button>
               </Link>
             </div>
-
-            {/* Trust indicators */}
             <div className="flex items-center justify-center lg:justify-start gap-8 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
                 <div className="flex -space-x-2">
@@ -75,15 +66,12 @@ const HeroSection: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Demo */}
-          <div className="lg:w-1/2">
+          {/* hide on mobile */}
+          <div className="lg:w-1/2 hidden md:block">
             <div className="relative">
-              {/* Glow effect */}
               <div className="absolute -inset-4 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-2xl blur-xl" />
-
               <Card className="relative bg-card/80 backdrop-blur-xl border-border/50 shadow-2xl">
                 <CardContent className="p-0">
-                  {/* Header */}
                   <div className="flex items-center justify-between p-6 border-b border-border/50">
                     <div className="flex items-center gap-3">
                       <div className="w-3 h-3 rounded-full bg-red-400" />

@@ -17,13 +17,13 @@ export async function checkRateLimit(req: Request) {
     .insert(usersTable)
     .values({
       id: id || `ip_${ip}`,
-      email: session?.user?.email || null, // Allow null email for unauthenticated users
+      email: session?.user?.email || null,
       ipAddress: !id ? ip : null,
     })
     .onConflictDoUpdate({
       target: [usersTable.id],
       set: {
-        email: session?.user?.email || null, // Allow null email for unauthenticated users
+        email: session?.user?.email || null,
         ipAddress: !id ? ip : null,
       },
     })
