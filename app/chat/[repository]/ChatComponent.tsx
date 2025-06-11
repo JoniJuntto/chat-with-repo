@@ -28,6 +28,16 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Octokit } from "@octokit/rest";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import {
+  initializeAnalytics,
+  trackEvent,
+} from "@/instrumentation-client";
 
 const octokit = new Octokit();
 
@@ -98,12 +108,18 @@ export default function ChatComponent() {
       : "";
 
   const [repository, setRepository] = useState("");
+
   const [repoInfo, setRepoInfo] = useState<RepoInfo | null>(null);
   const [rateLimitError, setRateLimitError] = useState<string | null>(null);
   const [repoError, setRepoError] = useState<string | null>(null);
   const [isValidating, setIsValidating] = useState(true);
+  const [model, setModel] = useState<"gemini" | "gpt-4o">("gemini");
   const [harshness, setHarshness] = useState(5);
   const router = useRouter();
+
+  useEffect(() => {
+    initializeAnalytics();
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -154,7 +170,9 @@ export default function ChatComponent() {
     setInput,
   } = useChat({
     api: "/api/chat",
-    body: { repository, harshness },
+
+    body: { repository, model, harshness },
+
     onError: (error) => {
       try {
         const errorData = JSON.parse(error.message);
@@ -206,11 +224,17 @@ export default function ChatComponent() {
     if (!input.trim() || isLoading || rateLimitError) return;
 
     setRateLimitError(null);
+    trackEvent("message_sent", { model, harshness });
     await originalHandleSubmit(e);
   };
 
   const handleSuggestedQuestion = (question: string) => {
     setInput(question);
+  };
+
+  const handleModelChange = (value: "gemini" | "gpt-4o") => {
+    setModel(value);
+    trackEvent("model_selected", { model: value });
   };
 
   // Loading state
@@ -328,6 +352,17 @@ export default function ChatComponent() {
                 </div>
               </div>
             </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  {model === "gemini" ? "Gemini" : "GPT-4o"}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => handleModelChange("gemini")}>Gemini</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleModelChange("gpt-4o")}>GPT-4o</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
@@ -514,9 +549,10 @@ export default function ChatComponent() {
                   </div>
                 </AlertDescription>
               </Alert>
+
             </div>
           )}
-
+          
           <div className="max-w-4xl mx-auto mb-4 flex items-center gap-3">
             <span className="text-xs">Mom</span>
             <input
@@ -530,7 +566,9 @@ export default function ChatComponent() {
             <span className="text-xs">Linus Torvalds</span>
           </div>
 
+
           <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
+
             <div className="flex gap-3 p-2 bg-background rounded-xl border border-border/50 shadow-sm focus-within:border-primary/50 focus-within:shadow-md transition-all duration-200">
               <Input
                 value={input}
