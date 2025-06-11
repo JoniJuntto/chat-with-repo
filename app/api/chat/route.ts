@@ -9,9 +9,9 @@ import { auth } from "@/auth";
 import { ensureDefaultModels, getModelByName } from "@/app/lib/models";
 import { upsertRepository } from "@/app/lib/repositories";
 
-const octokit = new Octokit();
 
-async function getRepositoryContent(owner: string, repo: string) {
+async function getRepositoryContent(owner: string, repo: string, token?: string) {
+  const octokit = new Octokit({ auth: token }); 
   try {
     const { data: repoData } = await octokit.rest.repos.get({
       owner,
@@ -127,7 +127,8 @@ export async function POST(req: Request) {
     const session = await auth();
 
     const [owner, repo] = repository.split("/");
-    const repoContent = await getRepositoryContent(owner, repo);
+    // @ts-expect-error - accessToken is not typed in the session object
+    const repoContent = await getRepositoryContent(owner, repo, session?.accessToken as string);
 
     await ensureDefaultModels();
 

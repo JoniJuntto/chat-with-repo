@@ -49,7 +49,7 @@ interface RecentChat {
   createdAt?: string;
 }
 
-const octokit = new Octokit();
+
 
 export default function ChooseRepoPage() {
   return (
@@ -75,6 +75,9 @@ const Content = () => {
   const [recentChats, setRecentChats] = useState<RecentChat[]>([]);
   const router = useRouter();
 
+  // @ts-expect-error - accessToken is not typed in the session object
+  const octokit = new Octokit({ auth: session?.accessToken as string });
+
   useEffect(() => {
     const validateRepo = async () => {
       if (!repository.includes("/")) {
@@ -92,6 +95,7 @@ const Content = () => {
 
       setIsValidating(true);
       setError(null);
+
 
       try {
         const { data } = await octokit.rest.repos.get({ owner, repo });

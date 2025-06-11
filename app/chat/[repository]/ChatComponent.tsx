@@ -39,7 +39,7 @@ import {
   trackEvent,
 } from "@/instrumentation-client";
 
-const octokit = new Octokit();
+
 
 const SUGGESTED_QUESTIONS = [
   {
@@ -98,7 +98,8 @@ export default function ChatComponent() {
   const searchParams = useSearchParams();
   const params = useParams();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
+// @ts-expect-error - accessToken is not typed in the session object
+const octokit = new Octokit({ auth: session?.accessToken as string });
   const owner = searchParams.get("owner");
   const repo =
     typeof params.repository === "string"
@@ -116,6 +117,8 @@ export default function ChatComponent() {
   const [model, setModel] = useState<"gemini" | "gpt-4o">("gemini");
   const [harshness, setHarshness] = useState(5);
   const router = useRouter();
+
+  
 
   useEffect(() => {
     initializeAnalytics();
@@ -164,7 +167,7 @@ export default function ChatComponent() {
     };
 
     validateRepo();
-  }, [owner, repo, octokit, session]);
+  }, [owner, repo, session, octokit.rest.repos]);
 
   const {
     messages,
