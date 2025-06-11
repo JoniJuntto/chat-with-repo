@@ -44,5 +44,12 @@
       "tag": "0005_dusty_stellaris",
       "breakpoints": true
     }
+    ,{
+      "idx": 6,
+      "version": "7",
+      "when": 1749666000000,
+      "tag": "0006_chat_messages",
+      "breakpoints": true
+    }
   ]
 }

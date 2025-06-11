@@ -173,6 +173,33 @@ export default function ChatComponent() {
     scrollToBottom();
   }, [messages, isLoading]);
 
+  // Save chat history when messages update
+  useEffect(() => {
+    if (isLoading || messages.length === 0 || !repository) return;
+
+    const saveHistory = async () => {
+      try {
+        const local = JSON.parse(
+          localStorage.getItem("chat-history") || "[]"
+        );
+        local.unshift({ repository, messages });
+        localStorage.setItem("chat-history", JSON.stringify(local.slice(0, 5)));
+
+        if (session?.user) {
+          await fetch("/api/chats", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ repository, messages }),
+          });
+        }
+      } catch (err) {
+        console.error("Failed to save chat", err);
+      }
+    };
+
+    saveHistory();
+  }, [messages, isLoading, repository, session]);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!input.trim() || isLoading || rateLimitError) return;
