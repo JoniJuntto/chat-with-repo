@@ -11,23 +11,42 @@ export async function checkRateLimit(req: Request) {
   const session = await auth();
   const ip = req.headers.get("x-forwarded-for") || "unknown";
   const id = session?.user?.id;
+  const userIdentifier = id || `ip_${ip}`;
   const isAuthenticated = !!session?.user;
 
-  const [user] = await db
-    .insert(usersTable)
-    .values({
-      id: id || `ip_${ip}`,
-      email: session?.user?.email || null,
-      ipAddress: !id ? ip : null,
-    })
-    .onConflictDoUpdate({
-      target: [usersTable.id],
-      set: {
+  // Try to find an existing user either by id or email
+  let [user] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.id, userIdentifier));
+
+  if (!user && session?.user?.email) {
+    [user] = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.email, session.user.email));
+  }
+
+  if (!user) {
+    [user] = await db
+      .insert(usersTable)
+      .values({
+        id: userIdentifier,
         email: session?.user?.email || null,
         ipAddress: !id ? ip : null,
-      },
-    })
-    .returning();
+      })
+      .returning();
+  } else {
+    // Keep user record up to date
+    [user] = await db
+      .update(usersTable)
+      .set({
+        email: session?.user?.email || user.email,
+        ipAddress: !id ? ip : user.ipAddress,
+      })
+      .where(eq(usersTable.id, user.id))
+      .returning();
+  }
 
   // If user has an active subscription, they have unlimited messages
   if (isAuthenticated && (await hasActiveSubscription(user.id))) {
