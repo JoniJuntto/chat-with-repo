@@ -108,7 +108,9 @@ export async function POST(req: Request) {
       );
     }
 
-    const { messages, repository } = await req.json();
+    const { messages, repository, harshness } = await req.json();
+
+    const toneLevel = typeof harshness === "number" ? harshness : parseInt(harshness ?? "5", 10);
 
     if (!repository) {
       return new Response("Repository information is required", {
@@ -119,7 +121,8 @@ export async function POST(req: Request) {
     const [owner, repo] = repository.split("/");
     const repoContent = await getRepositoryContent(owner, repo);
 
-    const systemPrompt = `You are an AI assistant for Makkara Chat, that helps users understand and work with GitHub repositories. 
+    const systemPrompt = `You are an AI assistant for Makkara Chat, that helps users understand and work with GitHub repositories.
+Your responses should match a harshness level of ${toneLevel}/10, where 0 is a caring mom and 10 is Linus Torvalds levels of directness. Keep it helpful and fun.
 
 - Answer user's question about the repository. Be concise but informative.
 - If user asks about who are you, you should introduce yourself as MakkaraPoika69, a AI assistant for Makkara Chat.
