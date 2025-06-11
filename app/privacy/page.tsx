@@ -126,7 +126,7 @@ export default function PrivacyPolicy() {
                           </li>
                           <li>
                             <strong>Favorite Repositories:</strong> If you use
-                            the &QUOT;favorite&QUOT; feature, we store the
+                            the &quot;favorite&quot; feature, we store the
                             GitHub repository URL, owner, and name associated
                             with your user ID.
                           </li>
@@ -275,7 +275,7 @@ export default function PrivacyPolicy() {
                             <li>
                               <strong>Google AI (Gemini):</strong> Your chat
                               messages (excluding your personal identity) are
-                              sent to Google&QUOT;s AI models to generate
+                              sent to Google&quot;s AI models to generate
                               responses.
                             </li>
                             <li>
@@ -375,7 +375,7 @@ export default function PrivacyPolicy() {
 
                 <Section
                   number="8"
-                  title="Children&QUOT;s Privacy"
+                  title="Children&quot;s Privacy"
                   icon={<Users className="h-5 w-5" />}
                   content="Our Service is not intended for use by individuals under the age of 13. We do not knowingly collect personally identifiable information from children under 13. If you are a parent or guardian and you are aware that your child has provided us with personal data, please contact us. If we become aware that we have collected personal data from a child under 13 without verification of parental consent, we take steps to remove that information from our servers."
                 />
@@ -384,7 +384,7 @@ export default function PrivacyPolicy() {
                   number="9"
                   title="Changes to This Privacy Policy"
                   icon={<Calendar className="h-5 w-5" />}
-                  content="We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the &QUOT;Last Updated&QUOT; date. You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page."
+                  content="We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the &quot;Last Updated&quot; date. You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page."
                 />
 
                 <Section

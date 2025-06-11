@@ -117,8 +117,8 @@ export default function TermsOfService() {
                           or any activities conducted on the Service.
                         </li>
                         <li>
-                          Misusing GitHub&APOS;s API or data accessed through
-                          the Service in a manner that violates GitHub&APOS;s
+                          Misusing GitHub&apos;s API or data accessed through
+                          the Service in a manner that violates GitHub&apos;s
                           terms of service.
                         </li>
                       </ul>
@@ -166,7 +166,7 @@ export default function TermsOfService() {
                       <li>
                         Access to additional messages and features may require a
                         paid subscription, processed via Stripe. All
-                        subscription payments are subject to Stripe&APOS;s terms
+                          subscription payments are subject to Stripe&apos;s terms
                         and conditions.
                       </li>
                       <li>Subscription fees are generally non-refundable.</li>
@@ -189,7 +189,7 @@ export default function TermsOfService() {
                         </li>
                         <li>
                           <strong>Google AI:</strong> For powering the AI
-                          assistant&APOS;s responses.
+                          assistant&apos;s responses.
                         </li>
                         <li>
                           <strong>Stripe:</strong> For payment processing and
@@ -209,7 +209,7 @@ export default function TermsOfService() {
                 <Section
                   number="9"
                   title="Disclaimer of Warranties"
-                  content="The Service is provided on an &APOS;as is&APOS; and &APOS;as available&APOS; basis, without any warranties of any kind, either express or implied, including, but not limited to, implied warranties of merchantability, fitness for a particular purpose, non-infringement, or course of performance. Makkara Chat does not warrant that the Service will be uninterrupted, secure, or error-free."
+                  content="The Service is provided on an &apos;as is&apos; and &apos;as available&apos; basis, without any warranties of any kind, either express or implied, including, but not limited to, implied warranties of merchantability, fitness for a particular purpose, non-infringement, or course of performance. Makkara Chat does not warrant that the Service will be uninterrupted, secure, or error-free."
                 />
 
                 <Section
@@ -227,7 +227,7 @@ export default function TermsOfService() {
                 <Section
                   number="12"
                   title="Changes to Terms"
-                  content="We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material, we will try to provide at least 30 days&APOS; notice prior to any new terms taking effect. What constitutes a material change will be determined at our sole discretion. By continuing to access or use our Service after those revisions become effective, you agree to be bound by the revised terms."
+                  content="We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material, we will try to provide at least 30 days&apos; notice prior to any new terms taking effect. What constitutes a material change will be determined at our sole discretion. By continuing to access or use our Service after those revisions become effective, you agree to be bound by the revised terms."
                 />
 
                 <Section
@@ -253,7 +253,7 @@ export default function TermsOfService() {
                 Questions about these terms?
               </h3>
               <p className="text-muted-foreground mb-4">
-                We&APOS;re here to help. Contact us if you need clarification on
+                We&apos;re here to help. Contact us if you need clarification on
                 any of these terms.
               </p>
               <Button asChild>
