@@ -53,7 +53,7 @@ interface RecentChat {
 export default function ChooseRepoPage() {
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="flex min-h-screen bg-gradient-to-br from-background via-background to-muted/20 w-full">
+      <div className="flex bg-gradient-to-br from-background via-background to-muted/20 w-full">
         <AppSidebar />
         <main className="flex-1 flex flex-col items-center px-4 py-12 w-full">
           <div className="w-full flex flex-col items-center gap-8">
@@ -130,7 +130,7 @@ const Content = () => {
     const load = async () => {
       try {
         if (session?.user) {
-          const res = await fetch("/api/chats");
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chats`);
           const data = await res.json();
           setRecentChats(data);
         } else {

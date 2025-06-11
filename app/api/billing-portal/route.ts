@@ -8,9 +8,9 @@ import stripe from "@/app/config/stripe";
 
 export async function POST() {
   const session = await auth();
-  const origin = headers().get("origin") || "";
+  const origin = (await headers()).get("origin") || "";
 
-  if (!session?.user) {
+  if (!session?.user || !session.user.id) {
     return NextResponse.redirect(`${origin}/login`, { status: 303 });
   }
 

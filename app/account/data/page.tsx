@@ -9,7 +9,7 @@ export default async function AccountDataPage() {
   if (!session?.user) {
     redirect("/login");
   }
-  const res = await fetch("/api/account/data", { cache: "no-store" });
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/account/data`, { cache: "no-store" });
 
   if (!res.ok) {
     throw new Error("Failed to load account data");

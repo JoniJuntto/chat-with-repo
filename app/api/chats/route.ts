@@ -7,7 +7,7 @@ import { desc, eq } from "drizzle-orm";
 export async function GET() {
   try {
     const session = await auth();
-    if (!session?.user) {
+    if (!session?.user || !session.user.id) {
       return NextResponse.json([]);
     }
 
@@ -36,7 +36,7 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const session = await auth();
-    if (!session?.user) {
+    if (!session?.user || !session.user.id) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
     const { repository, messages } = (await req.json()) as {

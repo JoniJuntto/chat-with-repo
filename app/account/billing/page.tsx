@@ -10,9 +10,11 @@ export default async function BillingPage() {
     redirect("/login");
   }
 
-  const res = await fetch("/api/account/subscription", { cache: "no-store" });
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/account/subscription`, { cache: "no-store" });
+  console.log(res);
 
   if (!res.ok) {
+    console.log(res);
     throw new Error("Failed to load subscription");
   }
 

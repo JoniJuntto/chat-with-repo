@@ -1,4 +1,4 @@
-// components/CookieConsent.tsx
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -39,7 +39,7 @@ export default function CookieConsent() {
         <CardContent className="pt-6">
           <h3 className="font-semibold mb-2">Cookie Preferences</h3>
           <p className="text-sm text-muted-foreground mb-4">
-            We use cookies required for GitHub authentication and to analyse usage with PostHog.
+            We use cookies required for authentication and Analytics.
           </p>
         </CardContent>
         <CardFooter className="flex flex-col gap-2">

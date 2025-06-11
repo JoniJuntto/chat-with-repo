@@ -6,8 +6,9 @@ import { eq, count } from "drizzle-orm";
 
 export async function GET() {
   const session = await auth();
-  if (!session?.user) {
-    return new NextResponse("Unauthorized", { status: 401 });
+  console.log("session", session);
+  if (!session?.user || !session.user.id) {
+    return new NextResponse("Unauthorized", { status: 403 });
   }
 
   const [user] = await db
@@ -15,12 +16,12 @@ export async function GET() {
     .from(usersTable)
     .where(eq(usersTable.id, session.user.id));
 
-  const [[{ value: favoriteCount }]] = await db
+  const [{ value: favoriteCount }] = await db
     .select({ value: count() })
     .from(favoriteReposTable)
     .where(eq(favoriteReposTable.userId, session.user.id));
 
-  const [[{ value: chatCount }]] = await db
+  const [{ value: chatCount }] = await db
     .select({ value: count() })
     .from(chatsTable)
     .where(eq(chatsTable.userId, session.user.id));

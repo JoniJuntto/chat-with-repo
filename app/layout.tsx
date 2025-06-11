@@ -10,9 +10,7 @@ import { Analytics } from "@vercel/analytics/next"
 import dynamic from "next/dynamic";
 import Script from "next/script";
 
-const CookieConsent = dynamic(() => import("@/components/CookieConsent"), {
-  ssr: false,
-});
+const CookieConsent = dynamic(() => import("@/components/CookieConsent"));
 
 const schemaOrg = {
   "@context": "https://schema.org",
