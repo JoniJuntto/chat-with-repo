@@ -7,7 +7,19 @@ import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
 import SignedInHeader from "@/components/SignedInHeader";
 import { Analytics } from "@vercel/analytics/next"
-import CookieConsent from "@/components/CookieConsent";
+import dynamic from "next/dynamic";
+import Script from "next/script";
+
+const CookieConsent = dynamic(() => import("@/components/CookieConsent"), {
+  ssr: false,
+});
+
+const schemaOrg = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Makkara",
+  url: "https://makkara.chat",
+};
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,8 +32,27 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Makkara - Chat with Repo",
-  description: "Understand any codebase through natural conversation with AI",
+  metadataBase: new URL("https://makkara.chat"),
+  title: "Makkara \u2013 Chat with Repo | Understand Code with AI",
+  description:
+    "Makkara lets you explore and understand any GitHub repository through conversation with AI. Ask questions, get examples, and dive into architecture with ease.",
+  keywords: [
+    "chat with repo",
+    "GitHub",
+    "AI",
+    "code understanding",
+    "Makkara",
+  ],
+  openGraph: {
+    title: "Makkara \u2013 Chat with Repo | Understand Code with AI",
+    description:
+      "Makkara lets you explore and understand any GitHub repository through conversation with AI. Ask questions, get examples, and dive into architecture with ease.",
+    url: "https://makkara.chat",
+    siteName: "Makkara",
+  },
+  alternates: {
+    canonical: "/",
+  },
 };
 
 export default async function RootLayout({
@@ -33,6 +64,14 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
+      <head>
+        <Script
+          id="schema-org"
+          type="application/ld+json"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrg) }}
+        />
+      </head>
       <SessionProvider session={session}>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background`}
