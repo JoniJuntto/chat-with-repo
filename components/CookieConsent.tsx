@@ -18,20 +18,12 @@ export default function CookieConsent() {
   }, []);
 
   const handleAcceptAll = () => {
-    setCookieConsent({
-      necessary: true,
-      analytics: true,
-      marketing: true,
-    });
+    setCookieConsent({ necessary: true, analytics: true, marketing: true });
     setShowBanner(false);
   };
 
   const handleRejectAll = () => {
-    setCookieConsent({
-      necessary: true,
-      analytics: false,
-      marketing: false,
-    });
+    setCookieConsent({ necessary: true, analytics: false, marketing: false });
     setShowBanner(false);
   };
 
@@ -47,25 +39,15 @@ export default function CookieConsent() {
         <CardContent className="pt-6">
           <h3 className="font-semibold mb-2">Cookie Preferences</h3>
           <p className="text-sm text-muted-foreground mb-4">
-            We use cookies to enhance your experience, analyze site usage, and
-            assist in marketing efforts.
+            We use cookies required for GitHub authentication and to analyse usage with PostHog.
           </p>
         </CardContent>
         <CardFooter className="flex flex-col gap-2">
           <div className="flex gap-2 w-full">
-            <Button onClick={handleAcceptAll} className="flex-1">
-              Accept All
-            </Button>
-            <Button onClick={handleRejectAll} variant="outline" className="flex-1">
-              Reject All
-            </Button>
+            <Button onClick={handleAcceptAll} className="flex-1">Accept All</Button>
+            <Button onClick={handleRejectAll} variant="outline" className="flex-1">Reject All</Button>
           </div>
-          <Button
-            onClick={handleCustomize}
-            variant="ghost"
-            size="sm"
-            className="w-full"
-          >
+          <Button onClick={handleCustomize} variant="ghost" size="sm" className="w-full">
             Customize
           </Button>
         </CardFooter>
@@ -107,29 +89,20 @@ function CookiePreferences({
       <Card className="w-full max-w-md">
         <CardContent className="pt-6">
           <h3 className="font-semibold mb-4">Cookie Preferences</h3>
-          
+
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium">Necessary</p>
-                <p className="text-sm text-muted-foreground">
-                  Required for basic functionality
-                </p>
+                <p className="text-sm text-muted-foreground">Required for basic functionality</p>
               </div>
-              <input
-                type="checkbox"
-                checked={preferences.necessary}
-                disabled
-                className="h-4 w-4"
-              />
+              <input type="checkbox" checked={preferences.necessary} disabled className="h-4 w-4" />
             </div>
 
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium">Analytics</p>
-                <p className="text-sm text-muted-foreground">
-                  Help us improve our service
-                </p>
+                <p className="text-sm text-muted-foreground">Help us improve our service</p>
               </div>
               <input
                 type="checkbox"
@@ -147,9 +120,7 @@ function CookiePreferences({
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium">Marketing</p>
-                <p className="text-sm text-muted-foreground">
-                  Personalized content and ads
-                </p>
+                <p className="text-sm text-muted-foreground">Personalized content and ads</p>
               </div>
               <input
                 type="checkbox"
@@ -166,12 +137,8 @@ function CookiePreferences({
           </div>
         </CardContent>
         <CardFooter className="flex gap-2">
-          <Button onClick={handleSave} className="flex-1">
-            Save Preferences
-          </Button>
-          <Button onClick={onClose} variant="outline" className="flex-1">
-            Cancel
-          </Button>
+          <Button onClick={handleSave} className="flex-1">Save Preferences</Button>
+          <Button onClick={onClose} variant="outline" className="flex-1">Cancel</Button>
         </CardFooter>
       </Card>
     </div>

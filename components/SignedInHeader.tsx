@@ -2,6 +2,7 @@
 
 import { signOut } from "next-auth/react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface SignedInHeaderProps {
   user: {
@@ -20,9 +21,11 @@ export default function SignedInHeader({ user }: SignedInHeaderProps) {
           </Link>
           <div className="flex items-center gap-3">
             {user.image && (
-              <img
+              <Image
                 src={user.image}
                 alt={user.name ?? "avatar"}
+                width={24}
+                height={24}
                 className="w-6 h-6 rounded-full border border-border"
               />
             )}

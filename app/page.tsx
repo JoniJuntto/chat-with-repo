@@ -1,6 +1,7 @@
 import React from "react";
 import HeroSection from "@/components/lander/Hero";
 import HowItWorksSection from "@/components/lander/HowItWorks";
+import IntroSection from "@/components/lander/IntroSection";
 import Footer from "@/components/lander/Footer";
 import CTASection from "@/components/lander/CtaSection";
 
@@ -13,6 +14,7 @@ function App() {
         <main className="flex flex-col">
           <HeroSection />
           <HowItWorksSection />
+          <IntroSection />
           <CTASection />
         </main>
         <Footer />
