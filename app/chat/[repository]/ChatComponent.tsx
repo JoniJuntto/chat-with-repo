@@ -102,6 +102,7 @@ export default function ChatComponent() {
   const [rateLimitError, setRateLimitError] = useState<string | null>(null);
   const [repoError, setRepoError] = useState<string | null>(null);
   const [isValidating, setIsValidating] = useState(true);
+  const [harshness, setHarshness] = useState(5);
   const router = useRouter();
 
   const scrollToBottom = () => {
@@ -153,7 +154,7 @@ export default function ChatComponent() {
     setInput,
   } = useChat({
     api: "/api/chat",
-    body: { repository },
+    body: { repository, harshness },
     onError: (error) => {
       try {
         const errorData = JSON.parse(error.message);
@@ -488,6 +489,19 @@ export default function ChatComponent() {
               </Alert>
             </div>
           )}
+
+          <div className="max-w-4xl mx-auto mb-4 flex items-center gap-3">
+            <span className="text-xs">Mom</span>
+            <input
+              type="range"
+              min={0}
+              max={10}
+              value={harshness}
+              onChange={(e) => setHarshness(Number(e.target.value))}
+              className="flex-1"
+            />
+            <span className="text-xs">Linus Torvalds</span>
+          </div>
 
           <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
             <div className="flex gap-3 p-2 bg-background rounded-xl border border-border/50 shadow-sm focus-within:border-primary/50 focus-within:shadow-md transition-all duration-200">
