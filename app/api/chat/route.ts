@@ -1,4 +1,5 @@
 import { google } from "@ai-sdk/google";
+import { openai } from "@ai-sdk/openai";
 import { streamText, type Message } from "ai";
 import { Octokit } from "@octokit/rest";
 import { checkRateLimit } from "@/app/lib/rate-limit";
@@ -108,7 +109,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const { messages, repository } = await req.json();
+    const { messages, repository, model } = await req.json();
 
     if (!repository) {
       return new Response("Repository information is required", {
@@ -161,8 +162,13 @@ Please help the user understand this repository, its structure, functionality, a
         systemPrompt + "\n\nUser question: " + formattedMessages[0].content;
     }
 
+    const aiModel =
+      model === "gpt-4o"
+        ? openai("gpt-4o")
+        : google("gemini-2.5-flash-preview-05-20");
+
     const result = streamText({
-      model: google("gemini-2.5-flash-preview-05-20"),
+      model: aiModel,
       messages: formattedMessages,
     });
 

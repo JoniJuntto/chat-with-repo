@@ -28,6 +28,16 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Octokit } from "@octokit/rest";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import {
+  initializeAnalytics,
+  trackEvent,
+} from "@/instrumentation-client";
 
 const octokit = new Octokit();
 
@@ -102,7 +112,12 @@ export default function ChatComponent() {
   const [rateLimitError, setRateLimitError] = useState<string | null>(null);
   const [repoError, setRepoError] = useState<string | null>(null);
   const [isValidating, setIsValidating] = useState(true);
+  const [model, setModel] = useState<"gemini" | "gpt-4o">("gemini");
   const router = useRouter();
+
+  useEffect(() => {
+    initializeAnalytics();
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -153,7 +168,7 @@ export default function ChatComponent() {
     setInput,
   } = useChat({
     api: "/api/chat",
-    body: { repository },
+    body: { repository, model },
     onError: (error) => {
       try {
         const errorData = JSON.parse(error.message);
@@ -178,11 +193,17 @@ export default function ChatComponent() {
     if (!input.trim() || isLoading || rateLimitError) return;
 
     setRateLimitError(null);
+    trackEvent("message_sent", { model });
     await originalHandleSubmit(e);
   };
 
   const handleSuggestedQuestion = (question: string) => {
     setInput(question);
+  };
+
+  const handleModelChange = (value: "gemini" | "gpt-4o") => {
+    setModel(value);
+    trackEvent("model_selected", { model: value });
   };
 
   // Loading state
@@ -300,6 +321,17 @@ export default function ChatComponent() {
                 </div>
               </div>
             </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  {model === "gemini" ? "Gemini" : "GPT-4o"}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => handleModelChange("gemini")}>Gemini</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleModelChange("gpt-4o")}>GPT-4o</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
