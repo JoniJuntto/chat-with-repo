@@ -9,9 +9,7 @@ import { auth } from "@/auth";
 import { ensureDefaultModels, getModelByName } from "@/app/lib/models";
 import { upsertRepository } from "@/app/lib/repositories";
 
-const octokit = new Octokit();
-
-async function getRepositoryContent(owner: string, repo: string) {
+async function getRepositoryContent(octokit: Octokit, owner: string, repo: string) {
   try {
     const { data: repoData } = await octokit.rest.repos.get({
       owner,
@@ -124,9 +122,13 @@ export async function POST(req: Request) {
         status: 400,
       });
     }
+    const session = await auth();
+    const octokit = new Octokit(
+      session?.accessToken ? { auth: session.accessToken as string } : {}
+    );
 
     const [owner, repo] = repository.split("/");
-    const repoContent = await getRepositoryContent(owner, repo);
+    const repoContent = await getRepositoryContent(octokit, owner, repo);
 
     await ensureDefaultModels();
 
@@ -190,7 +192,6 @@ Please help the user understand this repository, its structure, functionality, a
         ? openai("gpt-4o")
         : google("gemini-2.5-flash-preview-05-20");
 
-    const session = await auth();
     const ip = req.headers.get("x-forwarded-for") || "unknown";
     const userId = session?.user?.id ?? `ip_${ip}`;
 
