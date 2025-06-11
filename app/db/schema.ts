@@ -76,6 +76,19 @@ export const aiModelsTable = pgTable("ai_models", {
   ...timestamps,
 });
 
+export const repositoriesTable = pgTable("repositories", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  url: varchar("url", { length: 255 }).notNull().unique(),
+  owner: varchar("owner", { length: 255 }).notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  language: varchar("language", { length: 100 }),
+  stars: integer("stars").default(0),
+  forks: integer("forks").default(0),
+  lastFetchedAt: timestamp({ mode: "string" }).defaultNow(),
+  ...timestamps,
+});
+
 export const chatsTable = pgTable("chats", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: text("user_id")
@@ -84,5 +97,8 @@ export const chatsTable = pgTable("chats", {
   title: varchar("title", { length: 255 }),
   status: varchar("status", { length: 50 }).default("active").notNull(),
   modelId: uuid("model_id").references(() => aiModelsTable.id),
+  repositoryId: uuid("repository_id")
+    .notNull()
+    .references(() => repositoriesTable.id),
   ...timestamps,
 });
